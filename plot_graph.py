@@ -18,7 +18,6 @@ if __name__ == "__main__":
         x.append(k)
         y.append(sum(list)/len(list))
         k += 10
-    print(y)
     plt.plot(x,y)
     
     plt.xlabel('Density')

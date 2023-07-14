@@ -21,7 +21,7 @@ class Node:
         ## y-axis position
         self.y = y
         ## ID of the parent
-        self.parentID = None
+        self.parentID = -1
         ## list of children
         self.childrenIDs = set()
         ## list of neighbors
@@ -29,7 +29,7 @@ class Node:
         ## active time slot
         self.timeslot = timeslot
         
-        self.distance = 100000
+        self.distance = None
         
         self.rank = 0
          

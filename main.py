@@ -203,7 +203,7 @@ def create_and_save_Topology(n,l,t):
 def time_scheduling(D, L, t):
     n = (D*L*L)/(math.pi)
     r,im = divmod(n,1)
-    create_and_save_Topology(int(r//1), L, t)
+    # create_and_save_Topology(int(r//1), L, t)
     node_list = []
     count = 0
     save_path = "C:/Users/ADMIN/Desktop/DATN/" + str(L) + "/"
@@ -222,8 +222,8 @@ def time_scheduling(D, L, t):
     
     # Update neighbors
     # loop through node_list
-    for i in range(0,count):
-        for k in range(1,count):
+    for i in range(0,len(node_list)):
+        for k in range(1,len(node_list)):
             if(distance(node_list[i], node_list[k]) < 1):
                 node_list[i].neighbors.append(k)
     
@@ -281,8 +281,9 @@ def time_scheduling(D, L, t):
                 if component_node.ID == leafID:
                     unsort_list.append(component_node)
         # Set timeslot for component node
+        sorted_list = sorted(unsort_list, key=node_sort_key, reverse=True)
         
-        for component_node in unsort_list:
+        for component_node in sorted_list:
             if not primary_collision_checking(component_node, node_list, scheduled):
                 node_list[component_node.ID].timeslot = i
                 
@@ -301,7 +302,6 @@ def time_scheduling(D, L, t):
 
         if node_leaf_id_set:
             # Sort the list
-            sorted_list = sorted(unsort_list, key=node_sort_key, reverse=True)
             # Supplementary Scheduling
             
             # Non-leaf neighbor
