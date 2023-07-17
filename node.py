@@ -21,7 +21,7 @@ class Node:
         ## y-axis position
         self.y = y
         ## ID of the parent
-        self.parentID = -1
+        self.parentID = None
         ## list of children
         self.childrenIDs = set()
         ## list of neighbors

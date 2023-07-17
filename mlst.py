@@ -71,7 +71,7 @@ def build_mlst(node_list):
     # other node
     while untree:
         cost_list = []
-        min = 99999999
+        min = 999999999999999999999
         min_id = None
         
         for v_node_ID in tree:
@@ -95,7 +95,7 @@ def build_mlst(node_list):
         # append node into tree
         tree.append(min_id)
         untree.remove(min_id)
-        node_list[min_id].depth += 1
+        node_list[min_id].depth = node_list[min_parentID].depth + 1
         node_list[min_id].parentID = min_parentID
         node_list[min_parentID].childrenIDs.add(min_id)
 

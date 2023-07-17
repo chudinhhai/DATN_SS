@@ -1,5 +1,6 @@
 from main import time_scheduling
 import matplotlib.pyplot as plt
+import os
 
 if __name__ == "__main__":
     # list = []
@@ -23,3 +24,16 @@ if __name__ == "__main__":
     plt.xlabel('Density')
     plt.ylabel('Delay')
     plt.show()
+    # save_path = "C:/Users/ADMIN/Desktop/DATN/2/"
+    # name_of_file = "2-19-0.txt"
+    # full_directory = os.path.join(save_path, name_of_file)
+    # file = open(full_directory)
+    # for node_coordinate in file.readlines():
+    #     x.append(float(node_coordinate.split(',')[0]))
+    #     y.append(float(node_coordinate.split(',')[1]))
+    # plt.scatter(x,y)
+    # count = 0
+    # for (xi, yi) in zip(x, y):
+    #     plt.text(xi, yi, count, va='bottom', ha='center')
+    #     count += 1
+    # plt.show()
