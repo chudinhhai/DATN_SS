@@ -32,7 +32,8 @@ class Node:
         self.distance = None
         
         self.rank = 0
-         
+        
+        self.ready = 0
         self.scheduled = False
         
         self.depth = 0

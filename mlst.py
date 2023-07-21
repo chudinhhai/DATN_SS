@@ -3,6 +3,7 @@ import random
 import math
 import sys
 import queue
+import os
 from cost_value import Cost
 
 def create_fixed_topology():
@@ -59,7 +60,7 @@ def cal_depth_of_node(node_ID, node_list):
         else:
             1 + cal_depth_of_node(neighbor_ID, node_list)
 
-def build_mlst(node_list):
+def build_mlst(node_list, n, l, t):
     list = []
     tree = []
     untree = []
@@ -69,27 +70,27 @@ def build_mlst(node_list):
     tree.append(0)
     untree.remove(0)
     # other node
-    while untree:
+    while len(untree)>0:
         cost_list = []
-        min = 999999999999999999999
+        min_cost = 9999999999999999999999
         min_id = None
-        
+        min_parentID = None
+
         for v_node_ID in tree:
+            
             for u_node_ID in untree:
                 if u_node_ID in node_list[v_node_ID].neighbors:
-                    node_cost = Cost()
-                    node_cost.ID = u_node_ID
-                    node_cost.parentID = v_node_ID
-                    node_cost.cost = 10000*(len(node_list[v_node_ID].childrenIDs) + node_list[v_node_ID].depth) + 100*len(node_list[v_node_ID].neighbors) + len(node_list[u_node_ID].neighbors)
-                    cost_list.append(node_cost)
+                    
+                    cost = 1000000*(len(node_list[v_node_ID].childrenIDs) + node_list[v_node_ID].depth) + 1000*len(node_list[v_node_ID].neighbors) + len(node_list[u_node_ID].neighbors)
+                    
+                    if cost <= min_cost:
+                        min_cost = cost
+                        min_id = u_node_ID
+                        min_parentID = v_node_ID
+                    
                 else:
                     continue
-        
-        for value_cost in cost_list:
-            if value_cost.cost <= min:
-                min = value_cost.cost
-                min_id = value_cost.ID
-                min_parentID = value_cost.parentID
+
                 
                 
         # append node into tree
@@ -98,12 +99,59 @@ def build_mlst(node_list):
         node_list[min_id].depth = node_list[min_parentID].depth + 1
         node_list[min_id].parentID = min_parentID
         node_list[min_parentID].childrenIDs.add(min_id)
+        node_list[min_parentID].ready += 1
+        
+    save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(l) + "-" + str(l) + "/" 
+    name_of_file =  str(l) + "-" + str(n) + "-" + str(t) + '.txt'
+    full_directory = os.path.join(save_path, name_of_file)
+    if os.path.exists(full_directory):
+        os.remove(full_directory)
+    os.makedirs(os.path.dirname(full_directory), exist_ok=True)
+    with open(full_directory, 'w') as file:
+        for node in node_list:
+            string_list = []
+            for childrenID in node.childrenIDs:
+                string_list.append(str(childrenID))
+            string_list.append(str(0))
+            string_list.append("\n")
+            
+            file.write(",".join(string_list))
+
+def distance (node1, node2):
+    # print("distance: " + str(math.sqrt(pow((node1.x-node2.x), 2) + pow((node1.y-node2.y), 2))))
+    return math.sqrt(pow((node1.x-node2.x), 2) + pow((node1.y-node2.y), 2))
+
 
 if __name__ == "__main__":
-    node_list = create_fixed_topology()
-    result = build_mlst(node_list)
+    count = 0
+    node_list = []
+    # n = (95*2*2)/(math.pi)
+    # r,im = divmod(n,1)
+    save_path = "C:/Users/ADMIN/Desktop/DATN/" + str(4) + "/"
+    name_of_file = str(4) + "-" + str(25) + "-" + str(0) + '.txt'
+    full_directory = os.path.join(save_path, name_of_file)
+    # print(full_directory)
+    file = open(full_directory)
+    for node_coordinate in file.readlines():
+        node = Node()
+        node.ID = count
+        node.x = float(node_coordinate.split(',')[0])
+        node.y = float(node_coordinate.split(',')[1])
+        
+        node_list.append(node)
+        count += 1
+        pass
     
-    for component_node in result:
+    # Update neighbors
+    # loop through node_list
+    for i in range(0,len(node_list)):
+        for k in range(1,len(node_list)):
+            if(distance(node_list[i], node_list[k]) < 1):
+                node_list[i].neighbors.append(k)
+    
+    build_mlst(node_list, 4, 25, 0)
+    for component_node in node_list:
         print("ID: " + str(component_node.ID))
+        print(component_node.neighbors)
         print(component_node.childrenIDs)
     
