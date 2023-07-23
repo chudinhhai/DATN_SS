@@ -1,4 +1,4 @@
-from main import time_scheduling
+from main import time_scheduling, time_scheduling_with_k
 import matplotlib.pyplot as plt
 import os
 
@@ -10,19 +10,34 @@ if __name__ == "__main__":
     # print(sum(list)/len(list))
     x = []
     y = []
+    y_with_k = []
     k = 5
     while k <= 95:
         list = []
         for i in range(0,20):
-            delay = time_scheduling(k, 4 , i)
+            delay = time_scheduling(k, 7 , i)
             list.append(delay)
+            print("D: " + str(k) + " time: " + str(i) + " without k")
         x.append(k)
         y.append(sum(list)/len(list))
         k += 10
-    plt.plot(x,y)
+    kk = 5
+    while kk <= 95:
+        list_with_k = []
+        for i in range(0,20):
+            delay = time_scheduling_with_k(kk, 7 , i, 5)
+            list_with_k.append(delay)
+            print("D: " + str(k) + " time: " + str(i) + " with k")
+        # x.append(k)
+        y_with_k.append(sum(list_with_k)/len(list_with_k))
+        kk += 10
+    print(y_with_k)
+    print(y)
+    plt.plot(x,y, label = "Org")
+    plt.plot(x,y_with_k, label = "with k")
     plt.xticks(range(5, 105, 10))
     plt.yticks(range(0, 100, 25))
-    
+    plt.legend()
     plt.xlabel('Density')
     plt.ylabel('Delay')
     plt.show()

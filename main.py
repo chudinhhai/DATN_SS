@@ -196,31 +196,6 @@ def NDR_scheduling(node_list, i, scheduled_list, unscheduled_list):
         leaf_node_list.append(node_list[node_id])
         
     sorted_list = sorted(leaf_node_list, key=lambda x: x.rank, reverse=True)
-    ############ he so k ##################
-    # k = 0
-    # new_leaf_id_list = []
-    # new_sorted_list = []
-    # for component_node in sorted_list:
-    #     if k == 10:
-    #         break
-    #     new_leaf_id_list.append(component_node.ID)
-    #     new_sorted_list.append(component_node)
-    
-    # current_scheduled_list = []
-    # current_collision = None
-    # for component_node in sorted_list:
-    #     if primary_collision_checking(component_node, node_list, current_scheduled_list) == False and second_collision_checking(component_node, node_list, current_scheduled_list) == False:
-    #         current_scheduled_list.append(component_node.ID)
-    #         node_list[component_node.ID].timeslot = i
-    #         node_list[component_node.ID].scheduled = True
-    #         node_list[component_node.parentID].ready -= 1
-                
-    #         scheduled_list.append(component_node.ID)
-    #         unscheduled_list.remove(component_node.ID)
-    #     else:
-    #         current_collision = component_node.ID
-    # return new_leaf_id_list, current_scheduled_list
-    #######################################
     
     current_scheduled_list = []
     current_collision = None
@@ -238,6 +213,54 @@ def NDR_scheduling(node_list, i, scheduled_list, unscheduled_list):
                 
     return leaf_id_list, current_scheduled_list
 
+def NDR_scheduling_with_k(node_list, i, scheduled_list, unscheduled_list, k_value):
+    leaf_id_list = []
+    
+    for component_node in node_list:
+        if component_node.ready == 0 and component_node.scheduled == False:
+            if component_node.ID != 0:
+                leaf_id_list.append(component_node.ID)
+        
+    
+    
+    for node_v_id in leaf_id_list:
+        degree_list_of_u = []
+        for node_u_id in node_list[node_v_id].neighbors:
+            degree_list_of_u.append(len(node_list[node_u_id].neighbors))
+    
+        node_list[node_v_id].rank = sum(degree_list_of_u)
+    
+    leaf_node_list = []
+    for node_id in leaf_id_list:
+        leaf_node_list.append(node_list[node_id])
+        
+    sorted_list = sorted(leaf_node_list, key=lambda x: x.rank, reverse=True)
+    ############ he so k ##################
+    k = 0
+    new_leaf_id_list = []
+    new_sorted_list = []
+    for component_node in sorted_list:
+        if k == k_value:
+            break
+        new_leaf_id_list.append(component_node.ID)
+        new_sorted_list.append(component_node)
+    
+    current_scheduled_list = []
+    current_collision = None
+    for component_node in sorted_list:
+        if primary_collision_checking(component_node, node_list, current_scheduled_list) == False and second_collision_checking(component_node, node_list, current_scheduled_list) == False:
+            current_scheduled_list.append(component_node.ID)
+            node_list[component_node.ID].timeslot = i
+            node_list[component_node.ID].scheduled = True
+            node_list[component_node.parentID].ready -= 1
+                
+            scheduled_list.append(component_node.ID)
+            unscheduled_list.remove(component_node.ID)
+        else:
+            current_collision = component_node.ID
+    return new_leaf_id_list, current_scheduled_list
+    #######################################
+    
 
 def primary_collision_checking(node, node_list, current_scheduled_set):
     if len(current_scheduled_set)!=0:
@@ -321,7 +344,94 @@ def supplement_scheduling(node_list, remaining_node_set, current_scheduled_list,
                 
     return current_scheduled_list, remaining_node_set
                 
+def time_scheduling_with_k(D, L, t, k_value):
+    n = (D*L*L)/(math.pi)
+    print(n)
+    r,im = divmod(n,1)
     
+    # create_and_save_Topology(int(r//1), L, t)
+    
+    node_list = []
+    count = 0
+    save_path_distance = "C:/Users/ADMIN/Desktop/DATN/" + str(L) + "/"
+    # save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
+    name_of_file_distance = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
+    full_directory_distance = os.path.join(save_path_distance, name_of_file_distance)
+    file_distance = open(full_directory_distance)
+    
+    for node_coordinate in file_distance.readlines():
+        node = Node()
+        node.ID = count
+        node.x = float(node_coordinate.split(',')[0])
+        node.y = float(node_coordinate.split(',')[1])
+            
+        node_list.append(node)
+        count += 1
+        pass
+    time = 0
+    save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(L) + "-" + str(L) + "/" 
+    # save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
+    name_of_file = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
+    full_directory = os.path.join(save_path, name_of_file)
+    file = open(full_directory)
+    for children_set in file.readlines():
+        for childrenID in children_set.split(','):
+            if childrenID != "0" and childrenID != "\n":
+                node_list[time].childrenIDs.add(int(childrenID))
+                node_list[time].ready += 1
+        time +=1
+
+    for node in node_list:
+        if len(node.childrenIDs) > 0:
+            for children_id in node.childrenIDs:
+                node_list[children_id].parentID = node.ID
+                node_list[children_id].depth = node.depth + 1
+    
+    # for node in node_list:
+    #     print("ID: " + str(node.ID))
+
+    #     print(node.childrenIDs)
+    # Update neighbors
+    # loop through node_list
+    for i in range(0,len(node_list)):
+        for k in range(0,len(node_list)):
+            if distance(node_list[i], node_list[k]) < 1 and k!=i:
+                node_list[i].neighbors.append(k)
+                
+    
+    # build_mlst(node_list, int(r//1), L, t )
+    i=0
+    
+    unscheduled = []
+    scheduled = []
+    
+    # append unscheduled node
+    for component_node in node_list:
+        unscheduled.append(component_node.ID)
+    # value of iteration    
+    i = 0
+    # Neighbor Degree Ranking
+    while len(unscheduled) > 1:
+        # timeslot 
+        i = i + 1
+        
+        node_leaf_id_list, current_scheduled_list = NDR_scheduling_with_k(node_list, i, scheduled, unscheduled, k_value)
+        
+
+
+        if len(node_leaf_id_list)>=len(current_scheduled_list):
+            remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
+            current_scheduled_list, remaining_node_set = supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
+            
+        for component_node in node_list:
+            for node_id in scheduled:
+                if node_id in component_node.neighbors:
+                    component_node.neighbors.remove(node_id)
+
+            
+    # print(i)
+    return i
+
 def time_scheduling(D, L, t):
     n = (D*L*L)/(math.pi)
     print(n)
