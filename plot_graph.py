@@ -26,7 +26,8 @@ if __name__ == "__main__":
     # plt.show()
     x = []
     y = []
-    save_path = "C:/Users/ADMIN/Desktop/DATN/7/"
+    # save_path = "C:/Users/ADMIN/Desktop/DATN/7/"
+    save_path = "C:/Users/haicd/Desktop/DATN_SS/7"
     name_of_file = "7-1481-0.txt"
     full_directory = os.path.join(save_path, name_of_file)
     file = open(full_directory)

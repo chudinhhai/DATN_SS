@@ -165,7 +165,8 @@ def create_and_save_Topology(n,l,t):
                 break
         node.append
         
-    save_path = "C:/Users/ADMIN/Desktop/DATN/" + str(l) + "/"
+    # save_path = "C:/Users/ADMIN/Desktop/DATN/" + str(l) + "/"
+    save_path = "C:/Users/haicd/Desktop/DATN_SS/" + str(l) + "/"
     name_of_file = str(l) + "-" + str(n) + "-" + str(t) + '.txt'
     full_directory = os.path.join(save_path, name_of_file)
     with open (full_directory, 'w') as f:
@@ -305,7 +306,8 @@ def time_scheduling(D, L, t):
     
     node_list = []
     count = 0
-    save_path_distance = "C:/Users/ADMIN/Desktop/DATN/" + str(L) + "/"
+    # save_path_distance = "C:/Users/ADMIN/Desktop/DATN/" + str(L) + "/"
+    save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
     name_of_file_distance = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
     full_directory_distance = os.path.join(save_path_distance, name_of_file_distance)
     file_distance = open(full_directory_distance)
@@ -320,7 +322,8 @@ def time_scheduling(D, L, t):
         count += 1
         pass
     time = 0
-    save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(L) + "-" + str(L) + "/" 
+    # save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(L) + "-" + str(L) + "/" 
+    save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
     name_of_file = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
     full_directory = os.path.join(save_path, name_of_file)
     file = open(full_directory)
