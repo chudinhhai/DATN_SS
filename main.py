@@ -196,6 +196,15 @@ def NDR_scheduling(node_list, i, scheduled_list, unscheduled_list):
         leaf_node_list.append(node_list[node_id])
         
     sorted_list = sorted(leaf_node_list, key=lambda x: x.rank, reverse=True)
+    ############ he so k ##################
+    k = 0
+    new_leaf_id_list = []
+    new_sorted_list = []
+    for component_node in sorted_list:
+        if k == 10:
+            break
+        new_leaf_id_list.append(component_node.ID)
+        new_sorted_list.append(component_node)
     
     current_scheduled_list = []
     current_collision = None
@@ -210,8 +219,24 @@ def NDR_scheduling(node_list, i, scheduled_list, unscheduled_list):
             unscheduled_list.remove(component_node.ID)
         else:
             current_collision = component_node.ID
+    return new_leaf_id_list, current_scheduled_list
+    #######################################
+    
+    # current_scheduled_list = []
+    # current_collision = None
+    # for component_node in sorted_list:
+    #     if primary_collision_checking(component_node, node_list, current_scheduled_list) == False and second_collision_checking(component_node, node_list, current_scheduled_list) == False:
+    #         current_scheduled_list.append(component_node.ID)
+    #         node_list[component_node.ID].timeslot = i
+    #         node_list[component_node.ID].scheduled = True
+    #         node_list[component_node.parentID].ready -= 1
                 
-    return leaf_id_list, current_scheduled_list
+    #         scheduled_list.append(component_node.ID)
+    #         unscheduled_list.remove(component_node.ID)
+    #     else:
+    #         current_collision = component_node.ID
+                
+    # return leaf_id_list, current_scheduled_list
 
 
 def primary_collision_checking(node, node_list, current_scheduled_set):
@@ -306,8 +331,8 @@ def time_scheduling(D, L, t):
     
     node_list = []
     count = 0
-    # save_path_distance = "C:/Users/ADMIN/Desktop/DATN/" + str(L) + "/"
-    save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
+    save_path_distance = "C:/Users/ADMIN/Desktop/DATN/" + str(L) + "/"
+    # save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
     name_of_file_distance = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
     full_directory_distance = os.path.join(save_path_distance, name_of_file_distance)
     file_distance = open(full_directory_distance)
@@ -322,8 +347,8 @@ def time_scheduling(D, L, t):
         count += 1
         pass
     time = 0
-    # save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(L) + "-" + str(L) + "/" 
-    save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
+    save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(L) + "-" + str(L) + "/" 
+    # save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
     name_of_file = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
     full_directory = os.path.join(save_path, name_of_file)
     file = open(full_directory)
