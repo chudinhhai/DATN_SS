@@ -27,7 +27,7 @@ if __name__ == "__main__":
         for i in range(0,20):
             delay = time_scheduling_with_k(kk, 7 , i, 5)
             list_with_k.append(delay)
-            print("D: " + str(k) + " time: " + str(i) + " with k")
+            print("D: " + str(kk) + " time: " + str(i) + " with k")
         # x.append(k)
         y_with_k.append(sum(list_with_k)/len(list_with_k))
         kk += 10
