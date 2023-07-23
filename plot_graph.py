@@ -20,6 +20,8 @@ if __name__ == "__main__":
         y.append(sum(list)/len(list))
         k += 10
     plt.plot(x,y)
+    plt.xticks(range(5, 105, 10))
+    plt.yticks(range(0, 100, 25))
     
     plt.xlabel('Density')
     plt.ylabel('Delay')
