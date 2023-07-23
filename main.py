@@ -369,9 +369,9 @@ def time_scheduling(D, L, t):
         
 
 
-        # if len(node_leaf_id_list)>=len(current_scheduled_list):
-        #     remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
-        #     current_scheduled_list, remaining_node_set = supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
+        if len(node_leaf_id_list)>=len(current_scheduled_list):
+            remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
+            current_scheduled_list, remaining_node_set = supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
             
         for component_node in node_list:
             for node_id in scheduled:
@@ -384,5 +384,5 @@ def time_scheduling(D, L, t):
     
     
 if __name__ == "__main__":
-    delay = time_scheduling(35,4,0)
+    delay = time_scheduling(95,7,5)
     print(delay)

@@ -14,7 +14,7 @@ if __name__ == "__main__":
     # while k <= 95:
     #     list = []
     #     for i in range(0,20):
-    #         delay = time_scheduling(k, 4 , i)
+    #         delay = time_scheduling(k, 2 , i)
     #         list.append(delay)
     #     x.append(k)
     #     y.append(sum(list)/len(list))
@@ -26,8 +26,8 @@ if __name__ == "__main__":
     # plt.show()
     x = []
     y = []
-    save_path = "C:/Users/ADMIN/Desktop/DATN/4/"
-    name_of_file = "4-381-0.txt"
+    save_path = "C:/Users/ADMIN/Desktop/DATN/7/"
+    name_of_file = "7-1481-0.txt"
     full_directory = os.path.join(save_path, name_of_file)
     file = open(full_directory)
     for node_coordinate in file.readlines():
