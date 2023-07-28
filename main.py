@@ -217,7 +217,7 @@ def NDR_scheduling_with_k(node_list, i, scheduled_list, unscheduled_list, k_valu
     leaf_id_list = []
     
     for component_node in node_list:
-        if component_node.ready == 0 and component_node.scheduled == False:
+        if component_node.ready == 0 and component_node.scheduled == False :
             if component_node.ID != 0:
                 leaf_id_list.append(component_node.ID)
         
@@ -235,15 +235,6 @@ def NDR_scheduling_with_k(node_list, i, scheduled_list, unscheduled_list, k_valu
         leaf_node_list.append(node_list[node_id])
         
     sorted_list = sorted(leaf_node_list, key=lambda x: x.rank, reverse=True)
-    ############ he so k ##################
-    k = 0
-    new_leaf_id_list = []
-    new_sorted_list = []
-    for component_node in sorted_list:
-        if k == k_value:
-            break
-        new_leaf_id_list.append(component_node.ID)
-        new_sorted_list.append(component_node)
     
     current_scheduled_list = []
     current_collision = None
@@ -253,13 +244,16 @@ def NDR_scheduling_with_k(node_list, i, scheduled_list, unscheduled_list, k_valu
             node_list[component_node.ID].timeslot = i
             node_list[component_node.ID].scheduled = True
             node_list[component_node.parentID].ready -= 1
+            
+            # he so k
+            node_list[component_node.parentID].receivedMessage += 1
                 
             scheduled_list.append(component_node.ID)
             unscheduled_list.remove(component_node.ID)
         else:
             current_collision = component_node.ID
-    return new_leaf_id_list, current_scheduled_list
-    #######################################
+                
+    return leaf_id_list, current_scheduled_list
     
 
 def primary_collision_checking(node, node_list, current_scheduled_set):
@@ -344,9 +338,59 @@ def supplement_scheduling(node_list, remaining_node_set, current_scheduled_list,
                 
     return current_scheduled_list, remaining_node_set
                 
+def supplement_scheduling_with_k(node_list, remaining_node_set, current_scheduled_list, i, scheduled, unscheduled):
+    remaining_node_list = list(remaining_node_set)
+    for u_node_id in remaining_node_list:
+        for v_node_id in node_list[u_node_id].neighbors:
+            if node_list[v_node_id].ready != 0 and node_list[v_node_id].scheduled == False:
+                if primary_collision_for_ss(u_node_id, v_node_id, node_list, current_scheduled_list) == False and secondary_collision_for_ss(u_node_id, v_node_id, node_list, current_scheduled_list)==False:
+                    current_scheduled_list.append(u_node_id)
+                    
+                    node_list[node_list[u_node_id].parentID].childrenIDs.remove(u_node_id)
+                    node_list[node_list[u_node_id].parentID].ready -= 1
+                    #he so k
+                    # node_list[node_list[u_node_id].parentID].parentReady -= 1
+                    node_list[node_list[u_node_id].parentID].receivedMessage += 1
+                    
+                    node_list[u_node_id].parentID = v_node_id
+                    node_list[v_node_id].childrenIDs.add(u_node_id)
+                    
+                    remaining_node_list.remove(u_node_id)
+                    
+                    node_list[u_node_id].timeslot = i
+                    node_list[u_node_id].scheduled = True
+                    
+                    scheduled.append(u_node_id)
+                    unscheduled.remove(u_node_id)
+                    
+                    break
+                    
+    for u_node_id in remaining_node_list:
+        for v_node_id in node_list[u_node_id].neighbors:
+            if node_list[v_node_id].ready == 0 and node_list[v_node_id].scheduled == False:
+                if primary_collision_for_ss(u_node_id, v_node_id, node_list, current_scheduled_list) == False and secondary_collision_for_ss(u_node_id, v_node_id, node_list, current_scheduled_list)==False:
+                    current_scheduled_list.append(u_node_id)
+                    
+                    node_list[node_list[u_node_id].parentID].childrenIDs.remove(u_node_id)
+                    node_list[node_list[u_node_id].parentID].ready -= 1
+                    node_list[u_node_id].parentID = v_node_id
+                    node_list[v_node_id].childrenIDs.add(u_node_id)
+                    
+                    remaining_node_list.remove(u_node_id)
+                    
+                    node_list[u_node_id].timeslot = i
+                    node_list[u_node_id].scheduled = True
+                    
+                    scheduled.append(u_node_id)
+                    unscheduled.remove(u_node_id)
+                    
+                    break
+                
+    return current_scheduled_list, remaining_node_set
+                
 def time_scheduling_with_k(D, L, t, k_value):
     n = (D*L*L)/(math.pi)
-    print(n)
+    # print(n)
     r,im = divmod(n,1)
     
     # create_and_save_Topology(int(r//1), L, t)
@@ -380,19 +424,18 @@ def time_scheduling_with_k(D, L, t, k_value):
                 node_list[time].childrenIDs.add(int(childrenID))
                 node_list[time].ready += 1
         time +=1
-
     for node in node_list:
         if len(node.childrenIDs) > 0:
             for children_id in node.childrenIDs:
                 node_list[children_id].parentID = node.ID
                 node_list[children_id].depth = node.depth + 1
     
-    # for node in node_list:
-    #     print("ID: " + str(node.ID))
+    for node in node_list:
+        if len(node.childrenIDs) > k_value:
+            node.k_ready = k_value
+        else:
+            node.k_ready = len(node.childrenIDs)
 
-    #     print(node.childrenIDs)
-    # Update neighbors
-    # loop through node_list
     for i in range(0,len(node_list)):
         for k in range(0,len(node_list)):
             if distance(node_list[i], node_list[k]) < 1 and k!=i:
@@ -414,27 +457,61 @@ def time_scheduling_with_k(D, L, t, k_value):
     while len(unscheduled) > 1:
         # timeslot 
         i = i + 1
-        
+        # print(i)
         node_leaf_id_list, current_scheduled_list = NDR_scheduling_with_k(node_list, i, scheduled, unscheduled, k_value)
         
 
 
         if len(node_leaf_id_list)>=len(current_scheduled_list):
             remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
-            current_scheduled_list, remaining_node_set = supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
-            
+            current_scheduled_list, remaining_node_set = supplement_scheduling_with_k(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
+         
         for component_node in node_list:
             for node_id in scheduled:
                 if node_id in component_node.neighbors:
                     component_node.neighbors.remove(node_id)
+                    
+        
+        for node_id in unscheduled:
+            if node_list[node_id].receivedMessage == node_list[node_id].k_ready and node_list[node_id].ready > 0:
+                # print("hello")
+                if node_id != 0:
+                    if primary_collision_checking(node_list[node_id], node_list, current_scheduled_list) == False and second_collision_checking(node_list[node_id], node_list, current_scheduled_list) == False:
+                        if node_list[node_list[node_id].parentID].receivedMessage < node_list[node_list[node_id].parentID].k_ready:
+                            node_list[node_list[node_id].parentID].receivedMessage += 1
+                            node_list[node_id].sendingTime += 1
+                            remaining_children = len(node_list[node_id].childrenIDs) - k_value*node_list[node_id].sendingTime
+                            # print('hi')
+                            if remaining_children < 0:
+                                continue
+                            elif remaining_children == 0:
+                                node_list[node_id].timeslot = i
+                                node_list[node_id].scheduled = True
+                                node_list[node_list[node_id].parentID].ready -= 1
+                                scheduled.append(node_id)
+                                unscheduled.remove(node_id)
+                                
+                            else:
+                                if remaining_children >= k_value:
+                                    node_list[node_id].k_ready = k_value
+                                else: 
+                                    node_list[node_id].k_ready = remaining_children
+                                
+                        else:
+                            continue
+        
+        for component_node in node_list:
+            for node_id in scheduled:
+                if node_id in component_node.neighbors:
+                    component_node.neighbors.remove(node_id) 
 
-            
+
+        
     # print(i)
     return i
 
 def time_scheduling(D, L, t):
     n = (D*L*L)/(math.pi)
-    print(n)
     r,im = divmod(n,1)
     
     # create_and_save_Topology(int(r//1), L, t)
@@ -509,7 +586,7 @@ def time_scheduling(D, L, t):
 
         if len(node_leaf_id_list)>=len(current_scheduled_list):
             remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
-            current_scheduled_list, remaining_node_set = supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
+            supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
             
         for component_node in node_list:
             for node_id in scheduled:
@@ -522,5 +599,10 @@ def time_scheduling(D, L, t):
     
     
 if __name__ == "__main__":
-    delay = time_scheduling(95,7,5)
-    print(delay)
+    t=13
+    delay1 = time_scheduling(5,4,t)
+    delay2 = time_scheduling_with_k(5,4,t,3)
+    
+    
+    print(delay1)
+    print(delay2)

@@ -37,6 +37,10 @@ class Node:
         self.scheduled = False
         
         self.depth = 0
+        
+        self.k_ready = None
+        self.receivedMessage = 0
+        self.sendingTime = 0
         # ## assigned transmitting working period
         # self.tx_wp = -1
         # ## cycle
