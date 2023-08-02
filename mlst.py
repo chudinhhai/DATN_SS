@@ -127,8 +127,8 @@ if __name__ == "__main__":
     node_list = []
     # n = (95*2*2)/(math.pi)
     # r,im = divmod(n,1)
-    save_path = "C:/Users/ADMIN/Desktop/DATN/" + str(4) + "/"
-    name_of_file = str(4) + "-" + str(25) + "-" + str(0) + '.txt'
+    save_path = "C:/Users/ADMIN/Desktop/DATN/" + str(2) + "/"
+    name_of_file = str(2) + "-" + str(19) + "-" + str(0) + '.txt'
     full_directory = os.path.join(save_path, name_of_file)
     # print(full_directory)
     file = open(full_directory)
@@ -149,7 +149,7 @@ if __name__ == "__main__":
             if(distance(node_list[i], node_list[k]) < 1):
                 node_list[i].neighbors.append(k)
     
-    build_mlst(node_list, 4, 25, 0)
+    build_mlst(node_list, 2, 19, 0)
     for component_node in node_list:
         print("ID: " + str(component_node.ID))
         print(component_node.neighbors)

@@ -1,7 +1,6 @@
 from main import time_scheduling, time_scheduling_with_k
 import matplotlib.pyplot as plt
 import os
-
 if __name__ == "__main__":
     # list = []
     # for i in range(0,30):
@@ -11,9 +10,10 @@ if __name__ == "__main__":
     L = 2
     x = []
     y = []
-    y_with_k_1 = []
+    
     y_with_k_2 = []
     y_with_k_3 = []
+    y_with_k_4 = []
     k = 5
     while k <= 95:
         list = []
@@ -24,21 +24,21 @@ if __name__ == "__main__":
         x.append(k)
         y.append(sum(list)/len(list))
         k += 10
-    k1 = 5
-    while k1 <= 95:
-        list_with_k = []
-        for i in range(0,20):
-            delay = time_scheduling_with_k(k1, L , i, 3)
-            list_with_k.append(delay)
-            print("D: " + str(k1) + " time: " + str(i) + " L: " + str(L) + " with k = 1")
-        # x.append(k)
-        y_with_k_1.append(sum(list_with_k)/len(list_with_k))
-        k1 += 10
+    # k1 = 5
+    # while k1 <= 95:
+    #     list_with_k = []
+    #     for i in range(0,20):
+    #         delay = time_scheduling_with_k(k1, L , i, 3)
+    #         list_with_k.append(delay)
+    #         print("D: " + str(k1) + " time: " + str(i) + " L: " + str(L) + " with k = 1")
+    #     # x.append(k)
+    #     y_with_k_1.append(sum(list_with_k)/len(list_with_k))
+    #     k1 += 10
     k2 = 5
     while k2 <= 95:
         list_with_k = []
         for i in range(0,20):
-            delay = time_scheduling_with_k(k2, L , i, 3)
+            delay = time_scheduling_with_k(k2, L , i, 2)
             list_with_k.append(delay)
             print("D: " + str(k2) + " time: " + str(i) + " L: " + str(L) + " with k = 2")
         # x.append(k)
@@ -54,20 +54,34 @@ if __name__ == "__main__":
         # x.append(k)
         y_with_k_3.append(sum(list_with_k)/len(list_with_k))
         k3 += 10
+    k4 = 5 
+    while k4 <= 95:
+        list_with_k = []
+        for i in range(0,20):
+            delay = time_scheduling_with_k(k4, L , i, 4)
+            list_with_k.append(delay)
+            print("D: " + str(k4) + " time: " + str(i) + " L: " + str(L) + " with k = 4")
+        # x.append(k)
+        y_with_k_4.append(sum(list_with_k)/len(list_with_k))
+        k4 += 10
     print("x:")
     print(x)
     print("y without K:")
     print(y)
-    print("y with k = 1")
-    print(y_with_k_1)
+    # print("y with k = 1")
+    # print(y_with_k_1)
     print("y with k = 2")
     print(y_with_k_2)
     print("y with k = 3")
     print(y_with_k_3)
+    print("y with k = 4")
+    print(y_with_k_4)
     plt.plot(x,y, label = "without k")
-    plt.plot(x,y_with_k_1, label = "with k=1")
+    # plt.plot(x,y_with_k_1, label = "with k=1")
     plt.plot(x,y_with_k_2, label = "with k=2")
     plt.plot(x,y_with_k_3, label = "with k=3")
+    
+    plt.plot(x,y_with_k_4, label = "with k=4")
     plt.xticks(range(5, 105, 10))
     plt.yticks(range(0, 100, 25))
     plt.legend()
@@ -76,9 +90,9 @@ if __name__ == "__main__":
     plt.show()
     # x = []
     # y = []
-    # # save_path = "C:/Users/ADMIN/Desktop/DATN/7/"
-    # save_path = "C:/Users/haicd/Desktop/DATN_SS/7"
-    # name_of_file = "7-1481-0.txt"
+    # save_path = "C:/Users/ADMIN/Desktop/DATN/2/"
+    # # save_path = "C:/Users/haicd/Desktop/DATN_SS/2"
+    # name_of_file = "2-19-0.txt"
     # full_directory = os.path.join(save_path, name_of_file)
     # file = open(full_directory)
     # for node_coordinate in file.readlines():
