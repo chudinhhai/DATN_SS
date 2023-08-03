@@ -451,7 +451,7 @@ def time_scheduling_with_k(D, L, t, k_value):
 
     # assign for k
     for node in node_list:
-        if len(node.childrenIDs) >= k_value - 1:
+        if len(node.childrenIDs) >= k_value:
             node.k_ready = k_value - 1
         else:
             node.k_ready = len(node.childrenIDs)
@@ -468,29 +468,20 @@ def time_scheduling_with_k(D, L, t, k_value):
         # print(i)
         current_scheduled_list = []
         for node_id in unscheduled:
-            if node_list[node_id].receivedMessage == node_list[node_id].k_ready and node_id != 0 and len(node_list[node_id].childrenIDs) > 0 and node_list[node_id].scheduled == False:
+            if node_list[node_id].receivedMessage == node_list[node_id].k_ready and node_id != 0 and len(node_list[node_id].childrenIDs) > 0  and node_list[node_id].ready > 0 and node_list[node_id].scheduled == False:
                 test1 = primary_collision_checking(node_list[node_id], node_list, current_scheduled_list)
                 test2 = second_collision_checking(node_list[node_id], node_list, current_scheduled_list)
                 if primary_collision_checking(node_list[node_id], node_list, current_scheduled_list) == False and second_collision_checking(node_list[node_id], node_list, current_scheduled_list) == False:
                     if node_list[node_list[node_id].parentID].receivedMessage < node_list[node_list[node_id].parentID].k_ready:
                         node_list[node_id].sendingTime += 1
                         node_list[node_list[node_id].parentID].receivedMessage += 1
-                        
+                        node_list[node_id].receivedMessage = 0
                         if k_value*node_list[node_id].sendingTime < len(node_list[node_id].childrenIDs)+1:
-                            node_list[node_id].receivedMessage = 0
                             remain_children = len(node_list[node_id].childrenIDs) - k_value*node_list[node_id].sendingTime + 1
                             if remain_children >= k_value:
                                 node_list[node_id].k_ready = k_value
                             else:
-                                if remain_children > 0:
-                                    node_list[node_id].k_ready = remain_children
-                                else:
-                                    node_list[node_list[node_id].parentID].ready -= 1
-                                    node_list[node_id].timeslot = i
-                                    node_list[node_id].receivedMessage = 0
-                                    node_list[node_id].scheduled = True
-                                    unscheduled.remove(node_id)
-                                    scheduled.append(node_id)
+                                node_list[node_id].k_ready = remain_children
                         elif k_value*node_list[node_id].sendingTime >= len(node_list[node_id].childrenIDs)+1:
                             node_list[node_list[node_id].parentID].ready -= 1
                             node_list[node_id].timeslot = i

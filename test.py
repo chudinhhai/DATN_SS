@@ -72,12 +72,13 @@ def create_and_save_topology(n,l,t):
 if __name__ == "__main__":
     i = 0
     k = 0
-    D = 95
+    D = 55
     L = 7
     n = (D*L*L)/(math.pi)
     print(n)
     r,im = divmod(n,1)
     while i<20:
+        print(D)
         if create_and_save_topology(r//1, L, i) == True:
             i += 1
         else:
