@@ -57,7 +57,7 @@ def create_and_save_topology(n,l,t):
                 node_1.neighbors.append(node_2.ID)
     try:
         build_mlst(node_list, n, l, t) 
-        save_path = "C:/Users/ADMIN/Desktop/DATN/" + str(l) + "/"
+        save_path = "C:/Users/ADMIN/DATN_SS/" + str(l) + "/"
         name_of_file = str(l) + "-" + str(int(n)) + "-" + str(t) + '.txt'
         full_directory = os.path.join(save_path, name_of_file)
         with open (full_directory, 'w') as f:
@@ -72,13 +72,14 @@ def create_and_save_topology(n,l,t):
 if __name__ == "__main__":
     i = 0
     k = 0
-    D = 55
-    L = 7
+    D = 45
+    L = 4
     n = (D*L*L)/(math.pi)
     print(n)
     r,im = divmod(n,1)
     while i<20:
         print(D)
+        print(i)
         if create_and_save_topology(r//1, L, i) == True:
             i += 1
         else:

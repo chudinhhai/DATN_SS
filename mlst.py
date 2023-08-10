@@ -101,7 +101,7 @@ def build_mlst(node_list, n, l, t):
         node_list[min_parentID].childrenIDs.add(min_id)
         node_list[min_parentID].ready += 1
         
-    save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(l) + "-" + str(l) + "/" 
+    save_path = "C:/Users/ADMIN/DATN_SS/" +  str(l) + "-" + str(l) + "/" 
     name_of_file =  str(l) + "-" + str(int(n)) + "-" + str(t) + '.txt'
     full_directory = os.path.join(save_path, name_of_file)
     if os.path.exists(full_directory):

@@ -1,6 +1,6 @@
 from node import Node
 from mlst import build_mlst
-from trees import mlst
+from trees import mlst, build_dfs, build_bfs
 import random
 import math
 import sys
@@ -165,7 +165,7 @@ def create_and_save_Topology(n,l,t):
                 break
         node.append
         
-    # save_path = "C:/Users/ADMIN/Desktop/DATN/" + str(l) + "/"
+    # save_path = "C:/Users/ADMIN/DATN_SS/" + str(l) + "/"
     save_path = "C:/Users/haicd/Desktop/DATN_SS/" + str(l) + "/"
     name_of_file = str(l) + "-" + str(n) + "-" + str(t) + '.txt'
     full_directory = os.path.join(save_path, name_of_file)
@@ -397,7 +397,7 @@ def time_scheduling_with_k(D, L, t, k_value):
     
     node_list = []
     count = 0
-    save_path_distance = "C:/Users/ADMIN/Desktop/DATN/" + str(L) + "/"
+    save_path_distance = "C:/Users/ADMIN/DATN_SS/" + str(L) + "/"
     # save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
     name_of_file_distance = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
     full_directory_distance = os.path.join(save_path_distance, name_of_file_distance)
@@ -413,7 +413,7 @@ def time_scheduling_with_k(D, L, t, k_value):
         count += 1
         pass
     time = 0
-    save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(L) + "-" + str(L) + "/" 
+    save_path = "C:/Users/ADMIN/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
     # save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
     name_of_file = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
     full_directory = os.path.join(save_path, name_of_file)
@@ -520,7 +520,7 @@ def time_scheduling(D, L, t):
     
     node_list = []
     count = 0
-    save_path_distance = "C:/Users/ADMIN/Desktop/DATN/" + str(L) + "/"
+    save_path_distance = "C:/Users/ADMIN/DATN_SS/" + str(L) + "/"
     # save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
     name_of_file_distance = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
     full_directory_distance = os.path.join(save_path_distance, name_of_file_distance)
@@ -536,7 +536,7 @@ def time_scheduling(D, L, t):
         count += 1
         pass
     time = 0
-    save_path = "C:/Users/ADMIN/Desktop/DATN/" +  str(L) + "-" + str(L) + "/" 
+    save_path = "C:/Users/ADMIN/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
     # save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
     name_of_file = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
     full_directory = os.path.join(save_path, name_of_file)
@@ -547,6 +547,136 @@ def time_scheduling(D, L, t):
                 node_list[time].childrenIDs.add(int(childrenID))
                 node_list[time].ready += 1
         time +=1
+    for node in node_list:
+        if len(node.childrenIDs) > 0:
+            for children_id in node.childrenIDs:
+                node_list[children_id].parentID = node.ID
+                node_list[children_id].depth = node.depth + 1
+    for i in range(0,len(node_list)):
+        for k in range(0,len(node_list)):
+            if distance(node_list[i], node_list[k]) < 1 and k!=i:
+                node_list[i].neighbors.append(k)
+    i=0
+    unscheduled = []
+    scheduled = []
+    # append unscheduled node
+    for component_node in node_list:
+        unscheduled.append(component_node.ID)
+    # value of iteration    
+    i = 0
+    # Neighbor Degree Ranking
+    while len(unscheduled) > 1:
+        # timeslot 
+        i = i + 1
+        node_leaf_id_list, current_scheduled_list = NDR_scheduling(node_list, i, scheduled, unscheduled)
+        if len(node_leaf_id_list)>=len(current_scheduled_list):
+            remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
+            supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
+            
+        for component_node in node_list:
+            for node_id in scheduled:
+                if node_id in component_node.neighbors:
+                    component_node.neighbors.remove(node_id)
+    return i
+def time_scheduling_no_SS(D, L, t):
+    n = (D*L*L)/(math.pi)
+    r,im = divmod(n,1)
+    
+    # create_and_save_Topology(int(r//1), L, t)
+    
+    node_list = []
+    count = 0
+    save_path_distance = "C:/Users/ADMIN/DATN_SS/" + str(L) + "/"
+    # save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
+    name_of_file_distance = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
+    full_directory_distance = os.path.join(save_path_distance, name_of_file_distance)
+    file_distance = open(full_directory_distance)
+    
+    for node_coordinate in file_distance.readlines():
+        node = Node()
+        node.ID = count
+        node.x = float(node_coordinate.split(',')[0])
+        node.y = float(node_coordinate.split(',')[1])
+            
+        node_list.append(node)
+        count += 1
+        pass
+    time = 0
+    save_path = "C:/Users/ADMIN/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
+    # save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
+    name_of_file = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
+    full_directory = os.path.join(save_path, name_of_file)
+    file = open(full_directory)
+    for children_set in file.readlines():
+        for childrenID in children_set.split(','):
+            if childrenID != "0" and childrenID != "\n":
+                node_list[time].childrenIDs.add(int(childrenID))
+                node_list[time].ready += 1
+        time +=1
+    for node in node_list:
+        if len(node.childrenIDs) > 0:
+            for children_id in node.childrenIDs:
+                node_list[children_id].parentID = node.ID
+                node_list[children_id].depth = node.depth + 1
+    for i in range(0,len(node_list)):
+        for k in range(0,len(node_list)):
+            if distance(node_list[i], node_list[k]) < 1 and k!=i:
+                node_list[i].neighbors.append(k)
+    i=0
+    unscheduled = []
+    scheduled = []
+    # append unscheduled node
+    for component_node in node_list:
+        unscheduled.append(component_node.ID)
+    # value of iteration    
+    i = 0
+    # Neighbor Degree Ranking
+    while len(unscheduled) > 1:
+        # timeslot 
+        i = i + 1
+        node_leaf_id_list, current_scheduled_list = NDR_scheduling(node_list, i, scheduled, unscheduled)
+            
+        for component_node in node_list:
+            for node_id in scheduled:
+                if node_id in component_node.neighbors:
+                    component_node.neighbors.remove(node_id)
+    return i
+
+def time_scheduling_DFS(D, L, t):
+    n = (D*L*L)/(math.pi)
+    r,im = divmod(n,1)
+    
+    # create_and_save_Topology(int(r//1), L, t)
+    
+    node_list = []
+    count = 0
+    save_path_distance = "C:/Users/ADMIN/DATN_SS/" + str(L) + "/"
+    # save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
+    name_of_file_distance = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
+    full_directory_distance = os.path.join(save_path_distance, name_of_file_distance)
+    file_distance = open(full_directory_distance)
+    
+    for node_coordinate in file_distance.readlines():
+        node = Node()
+        node.ID = count
+        node.x = float(node_coordinate.split(',')[0])
+        node.y = float(node_coordinate.split(',')[1])
+            
+        node_list.append(node)
+        count += 1
+        pass
+    # time = 0
+    # save_path = "C:/Users/ADMIN/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
+    # # save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
+    # name_of_file = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
+    # full_directory = os.path.join(save_path, name_of_file)
+    # file = open(full_directory)
+    # for children_set in file.readlines():
+    #     for childrenID in children_set.split(','):
+    #         if childrenID != "0" and childrenID != "\n":
+    #             node_list[time].childrenIDs.add(int(childrenID))
+    #             node_list[time].ready += 1
+    #     time +=1
 
     for node in node_list:
         if len(node.childrenIDs) > 0:
@@ -564,7 +694,13 @@ def time_scheduling(D, L, t):
         for k in range(0,len(node_list)):
             if distance(node_list[i], node_list[k]) < 1 and k!=i:
                 node_list[i].neighbors.append(k)
-                
+    
+    new = build_dfs(node_list)
+    for node in node_list:
+        node.ready = len(node.childrenIDs)
+        # print("ID: " + str(node.ID))
+        # print(node.childrenIDs)
+        # print("parentID: " + str(node.parentID))
     
     # build_mlst(node_list, int(r//1), L, t )
     i=0
@@ -586,9 +722,9 @@ def time_scheduling(D, L, t):
         
 
 
-        if len(node_leaf_id_list)>=len(current_scheduled_list):
-            remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
-            supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
+        # if len(node_leaf_id_list)>=len(current_scheduled_list):
+        #     remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
+        #     supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
             
         for component_node in node_list:
             for node_id in scheduled:
@@ -599,16 +735,105 @@ def time_scheduling(D, L, t):
     # print(i)
     return i
     
+def time_scheduling_BFS(D, L, t):
+    n = (D*L*L)/(math.pi)
+    r,im = divmod(n,1)
+    
+    # create_and_save_Topology(int(r//1), L, t)
+    
+    node_list = []
+    count = 0
+    save_path_distance = "C:/Users/ADMIN/DATN_SS/" + str(L) + "/"
+    # save_path_distance = "C:/Users/haicd/Desktop/DATN_SS/" + str(L) + "/"
+    name_of_file_distance = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
+    full_directory_distance = os.path.join(save_path_distance, name_of_file_distance)
+    file_distance = open(full_directory_distance)
+    
+    for node_coordinate in file_distance.readlines():
+        node = Node()
+        node.ID = count
+        node.x = float(node_coordinate.split(',')[0])
+        node.y = float(node_coordinate.split(',')[1])
+            
+        node_list.append(node)
+        count += 1
+        pass
+    # time = 0
+    # save_path = "C:/Users/ADMIN/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
+    # # save_path = "C:/Users/haicd/Desktop/DATN_SS/" +  str(L) + "-" + str(L) + "/" 
+    # name_of_file = str(L) + "-" + str(int(r//1)) + "-" + str(t) + '.txt'
+    # full_directory = os.path.join(save_path, name_of_file)
+    # file = open(full_directory)
+    # for children_set in file.readlines():
+    #     for childrenID in children_set.split(','):
+    #         if childrenID != "0" and childrenID != "\n":
+    #             node_list[time].childrenIDs.add(int(childrenID))
+    #             node_list[time].ready += 1
+    #     time +=1
+
+    for node in node_list:
+        if len(node.childrenIDs) > 0:
+            for children_id in node.childrenIDs:
+                node_list[children_id].parentID = node.ID
+                node_list[children_id].depth = node.depth + 1
+    
+    # for node in node_list:
+    #     print("ID: " + str(node.ID))
+
+    #     print(node.childrenIDs)
+    # Update neighbors
+    # loop through node_list
+    for i in range(0,len(node_list)):
+        for k in range(0,len(node_list)):
+            if distance(node_list[i], node_list[k]) < 1 and k!=i:
+                node_list[i].neighbors.append(k)
+    
+    new = build_bfs(node_list)
+    for node in node_list:
+        node.ready = len(node.childrenIDs)
+        # print("ID: " + str(node.ID))
+        # print(node.childrenIDs)
+        # print("parentID: " + str(node.parentID))
+    
+    # build_mlst(node_list, int(r//1), L, t )
+    i=0
+    
+    unscheduled = []
+    scheduled = []
+    
+    # append unscheduled node
+    for component_node in node_list:
+        unscheduled.append(component_node.ID)
+    # value of iteration    
+    i = 0
+    # Neighbor Degree Ranking
+    while len(unscheduled) > 1:
+        # timeslot 
+        i = i + 1
+        
+        node_leaf_id_list, current_scheduled_list = NDR_scheduling(node_list, i, scheduled, unscheduled)
+        
+
+
+        # if len(node_leaf_id_list)>=len(current_scheduled_list):
+        #     remaining_set = set(node_leaf_id_list).difference(set(current_scheduled_list))
+        #     supplement_scheduling(node_list, remaining_set, current_scheduled_list, i , scheduled, unscheduled)
+            
+        for component_node in node_list:
+            for node_id in scheduled:
+                if node_id in component_node.neighbors:
+                    component_node.neighbors.remove(node_id)
+
+            
+    # print(i)
+    return i
     
 if __name__ == "__main__":
     # t=0
-    l=2
-    D = 95
+    l=1
+    D = 15
     for t in range(0,20):
         delay = time_scheduling(D,l,t)
-        delay2 = time_scheduling_with_k(D,l,t,2)
-        delay3 = time_scheduling_with_k(D,l,t,3)
-        
-        print("without k: " + str(delay))
-        print("with k=2: " + str(delay2))
-        print("with k=3: " + str(delay3))
+        # delay2 = time_scheduling_BFS(D,l,t)
+        print(delay)
+        # print(delay2)

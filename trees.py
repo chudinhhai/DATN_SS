@@ -17,7 +17,7 @@ def build_bfs(node_list):
             if node_list[each_node_id].distance == INFINITY:
                 node_list[each_node_id].distance = current.distance + 1
                 node_list[each_node_id].parentID = current.ID
-                current.childrenIDs.append(each_node_id)
+                current.childrenIDs.add(each_node_id)
                 q.put(node_list[each_node_id])
     else:
         if count < len(node_list):
@@ -42,7 +42,7 @@ def build_dfs(node_list):
             for u in node_list[v].neighbors:
                 if u not in S and node_list[u].discovered is False:
                     node_list[u].parentID = v
-                    node_list[v].childrenIDs.append(u)
+                    node_list[v].childrenIDs.add(u)
                     S.append(u)
     return S
 

@@ -1,4 +1,4 @@
-from main import time_scheduling, time_scheduling_with_k
+from main import time_scheduling, time_scheduling_DFS, time_scheduling_BFS, time_scheduling_no_SS
 import matplotlib.pyplot as plt
 import os
 if __name__ == "__main__":
@@ -7,84 +7,102 @@ if __name__ == "__main__":
     #     delay = time_scheduling(85, 2, i)
     #     list.append(delay)
     # print(sum(list)/len(list))
-    # L = 4
-    # D_limit = 95
-    # x = []
-    # y = []
+    L = 7
+    L_limit = 8
+    D = 45
+    D_limit = 95
+    x = []
+    y = []
+    y_no_SS = []
+    # D=15
+    # y_wires = [3, 14, 18, 21, 23.5, 24.5, 26.5, 28]
+    # y_sda =   [3, 14, 17, 19, 22.5  , 22  , 24  , 26]
+    #D=45
+    # y = [12.55, 23.6, 27.7, 33.5, 37.2, 40.7, 43.25, 45.15]
+    # y_wires = [12.55, 45, 49.5, 54  , 59, 64, 66  , 69]
+    # y_sda =   [12.55, 45, 47.5, 49.5, 50, 49, 49.8, 51.5]
+    #D=85
+    # y = [24.75, 37.05, 46.9, 51.45, 59.45, 64.3, 68.1, 70.6]
+    # y_wires = [24.75, 87, 90  , 102, 110 , 115, 120 , 122]
+    # y_sda =   [24.75, 87, 88.5, 90 , 87.5, 86 , 86.4, 86.4]
     
-    # y_with_k_2 = []
-    # y_with_k_3 = []
-    # y_with_k_5 = []
-    # k = 5
-    # while k <= D_limit:
+    # x = [5, 15, 25, 35, 45, 55, 65, 75, 85, 95]
+    # L=7
+    # y = [15.15, 23.25, 29.95, 36.65, 43.25, 49.2, 55.25, 62.45, 68.1, 74.45]
+    ## L=2
+    # y_wires = [4.45,15,25,35,45,55,65,75,85,95]
+    # y_sda = [4.45,15,25,35,45,55,65,75,85,95]
+    ## L=4
+    # y_wires = [9.15, 21  , 31.25, 44, 55, 66, 73, 87.5, 105, 115]
+    # y_sda =   [9.15, 20.5, 29.5 , 42, 50, 60, 70, 83  , 94 , 99]
+    ## L=7
+    # y_wires = [16, 27, 38, 55, 67, 80, 94, 105, 117, 130]
+    # y_sda =   [16, 25, 32, 42, 50, 58, 69, 78 , 87 , 95]
+    ##
+    y_with_DFS = []
+    y_with_BFS = []
+    
+    k = 5
+    while k <= D_limit:
+        list = []
+        for i in range(0,20):
+            delay = time_scheduling_no_SS(k, L, i)
+            list.append(delay)
+            print("D: " + str(k) + " time: " + str(i) + " L: " + str(L) + " with MLST")
+        x.append(k)
+        y.append(sum(list)/len(list))
+        k += 10
+    # k1 = 1
+    # while k1 <= L_limit:
     #     list = []
     #     for i in range(0,20):
-    #         delay = time_scheduling(k, L, i)
+    #         delay = time_scheduling_no_SS(D, k1, i)
     #         list.append(delay)
-    #         print("D: " + str(k) + " time: " + str(i) + " L: " + str(L) + " without k")
-    #     x.append(k)
-    #     y.append(sum(list)/len(list))
-    #     k += 10
-    # k1 = 5
+    #         print("D: " + str(D) + " time: " + str(k1) + " L: " + str(L) + " with MLST no SS")
+    #     y_no_SS.append(sum(list)/len(list))
+    #     k1 += 1
 
-    # k2 = 5
-    # while k2 <= D_limit:
-    #     list_with_k = []
-    #     for i in range(0,20):
-    #         delay = time_scheduling_with_k(k2, L , i, 2)
-    #         list_with_k.append(delay)
-    #         print("D: " + str(k2) + " time: " + str(i) + " L: " + str(L) + " with k = 2")
-    #     # x.append(k)
-    #     y_with_k_2.append(sum(list_with_k)/len(list_with_k))
-    #     k2 += 10
-    # k3 = 5 
-    # while k3 <= D_limit:
-    #     list_with_k = []
-    #     for i in range(0,20):
-    #         delay = time_scheduling_with_k(k3, L , i, 3)
-    #         list_with_k.append(delay)
-    #         print("D: " + str(k3) + " time: " + str(i) + " L: " + str(L) + " with k = 3")
-    #     # x.append(k)
-    #     y_with_k_3.append(sum(list_with_k)/len(list_with_k))
-    #     k3 += 10
-    # k5 = 5 
-    # while k5 <= D_limit:
-    #     list_with_k = []
-    #     for i in range(0,20):
-    #         delay = time_scheduling_with_k(k5, L , i, 5)
-    #         list_with_k.append(delay)
-    #         print("D: " + str(k5) + " time: " + str(i) + " L: " + str(L) + " with k = 5")
-    #     # x.append(k)
-    #     y_with_k_5.append(sum(list_with_k)/len(list_with_k))
-    #     k5 += 10
-    # x = [5,15,25,35,45,55,65,75,85,95]
-    # y = [15.15, 23.25, 29.95, 36.65, 43.25, 49.2, 55.25, 62.45, 68.1, 74.45]
-    # y_with_k_2 = [15.55, 24.8, 32.95, 40.45, 47.55, 53.7, 60.8, 68.75, 75.75, 82.55]
-    # y_with_k_3 = [15.2, 23.85, 30.5, 37.85, 44.8, 50.75, 57.15, 64.75, 70.15, 77.15]
-    # print("x:")
-    # print(x)
-    # print("y without K:")
-    # print(y)
-    # # print("y with k = 1")
-    # # print(y_with_k_1)
-    # print("y with k = 2")
-    # print(y_with_k_2)
-    # print("y with k = 3")
-    # print(y_with_k_3)
-    # # print("y with k = 5")
-    # # print(y_with_k_5)
-    # plt.plot(x,y, label = "without k")
-    # # plt.plot(x,y_with_k_1, label = "with k=1")
-    # plt.plot(x,y_with_k_2, label = "with k=2")
-    # plt.plot(x,y_with_k_3, label = "with k=3")
-    
-    # # plt.plot(x,y_with_k_5, label = "with k=5")
-    # plt.xticks(range(5, 105, 10))
-    # plt.yticks(range(0, 100, 25))
-    # plt.legend()
-    # plt.xlabel('Density')
-    # plt.ylabel('Delay')
-    # plt.show()
+    k2 = 5
+    while k2 <= D_limit:
+        list_with_k = []
+        for i in range(0,20):
+            delay = time_scheduling_DFS(k2, L , i)
+            list_with_k.append(delay)
+            print("D: " + str(k2) + " time: " + str(i) + " L: " + str(L) + " with DFS")
+        # x.append(k)
+        y_with_DFS.append(sum(list_with_k)/len(list_with_k))
+        k2 += 10
+    k3 = 5 
+    while k3 <= D_limit:
+        list_with_k = []
+        for i in range(0,20):
+            delay = time_scheduling_BFS(k3, L , i)
+            list_with_k.append(delay)
+            print("D: " + str(k3) + " time: " + str(i) + " L: " + str(L) + " with BFS")
+        # x.append(k)
+        y_with_BFS.append(sum(list_with_k)/len(list_with_k))
+        k3 += 10
+        
+    print("x:")
+    print(x)
+    print("y")
+    print(y)
+    print("y with DFS")
+    print(y_with_DFS)
+    print("y with BFS")
+    print(y_with_BFS)
+    plt.plot(x,y, label = "MLST", marker=".")
+    # plt.plot(x,y_no_SS, label = "without SS", marker="*")
+    # plt.plot(x,y_sda, label = "SDA", marker="|")
+    plt.plot(x,y_with_DFS, label = "DFS", marker="*")
+    plt.plot(x,y_with_BFS, label = "BFS", marker="|")
+    plt.xticks(range(5, 105, 10))
+    plt.yticks(range(0, 120, 20))
+    plt.legend(loc='best')
+    plt.xlabel('node density (D)')
+    plt.ylabel('Delay')
+    plt.title('side length L=' + str(L))
+    plt.show()
     # x = []
     # y = []
     # save_path = "C:/Users/ADMIN/Desktop/DATN/2/"
@@ -101,48 +119,3 @@ if __name__ == "__main__":
     #     plt.text(xi, yi, count, va='bottom', ha='center')
     #     count += 1
     # plt.show()
-    
-    L = 2
-    x = [2,3,5,7,10]
-    y=[]
-    list = []
-    list_with_k_2 = []
-    list_with_k_3 = []
-    list_with_k_5 = []
-    list_with_k_7 = []
-    list_with_k_10 = []
-    init_value = None
-    for i in range(0,20):
-        delay = time_scheduling(55, L , i)
-        list.append(delay)
-        print("D: " + str(55) + " time: " + str(i) + " L: " + str(L))
-    init_value = sum(list)/len(list)
-    for i in range(0,20):
-        delay = time_scheduling_with_k(55, L , i, 2)
-        list_with_k_2.append(delay)
-        print("D: " + str(55) + " time: " + str(i) + " L: " + str(L) + " with k = 2")
-    y.append(sum(list_with_k_2)/len(list_with_k_2) - init_value)
-    for i in range(0,20):
-        delay = time_scheduling_with_k(55, L , i, 3)
-        list_with_k_3.append(delay)
-        print("D: " + str(55) + " time: " + str(i) + " L: " + str(L) + " with k = 3")
-    y.append(sum(list_with_k_3)/len(list_with_k_3) - init_value)
-    for i in range(0,20):
-        delay = time_scheduling_with_k(55, L , i, 5)
-        list_with_k_5.append(delay)
-        print("D: " + str(55) + " time: " + str(i) + " L: " + str(L) + " with k = 5")
-    y.append(sum(list_with_k_5)/len(list_with_k_5) - init_value)
-    for i in range(0,20):
-        delay = time_scheduling_with_k(55, L , i, 7)
-        list_with_k_7.append(delay)
-        print("D: " + str(55) + " time: " + str(i) + " L: " + str(L) + " with k = 7")
-    y.append(sum(list_with_k_7)/len(list_with_k_7) - init_value)
-    for i in range(0,20):
-        delay = time_scheduling_with_k(55, L , i, 10)
-        list_with_k_10.append(delay)
-        print("D: " + str(55) + " time: " + str(i) + " L: " + str(L) + " with k = 10")
-    y.append(sum(list_with_k_10)/len(list_with_k_10) - init_value)
-    plt.plot(x,y)
-    plt.xlabel("k")
-    plt.ylabel("delay")
-    plt.show()  
